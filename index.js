@@ -26,9 +26,8 @@ const {exec,spawn} = require("child_process")
 
 
 const app = express();
-const passport = require("passport")
-const configPassport = require("./passport")
 const session = require("express-session")
+const passport = require("passport")
 
 //DAtABASE
 //const {db}=require("./db");
@@ -42,11 +41,7 @@ app.use(session({
     saveUninitialized:true
 }))
 
-//-------
-const auth = (req,res,next)=>{
-    if(req.isAuthenticated()) return next()
-    res.redirect("/login")
-}
+
 
 //plantilla
 app.set("views",__dirname+"/views")
@@ -60,32 +55,14 @@ app.use(passport.initialize())
 app.use(passport.session())
 
 //routes
-app.get("/profile",auth ,(req,res)=>{
-    res.render("profile", {user:req.user.username})
-})
+const usersRoutes = require('./src/routes/users');
 
-app.get("/login", (req,res)=>{
-    res.render("signin")
-})
 
-app.get("/signup", (req,res)=>{
-    req.logOut();
-    res.render("signup")
-})
+//----------- middlewares y rutas ------------
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+app.use("/api/users", usersRoutes); 
 
-app.get("/logout",(req,res)=>{
-    res.send("bienv")
-})
-
-app.post("/signup",passport.authenticate("local-signup",{
-    successRedirect:"/login",
-    failureRedirect:"/signup"
-}))
-
-app.post("/login",passport.authenticate("local-login",{
-    successRedirect:"/profile",
-    failureRedirect:"/login"
-}))
 
 //-------- fork
 
@@ -129,3 +106,6 @@ app.listen(PORT, ()=>{
     })*/
     console.log(`server run on PORT ${PORT} HOST ${HOST}`)
 });
+
+module.exports = app;
+
