@@ -44,11 +44,8 @@ app.use(session({
 
 
 //plantilla
-app.set("views",__dirname+"/views")
+app.set("views",__dirname+"/src/views")
 app.set("view engine","ejs")
-
-app.use(express.json())
-app.use(express.urlencoded({extended:false}))
 
 //passport
 app.use(passport.initialize())
@@ -60,7 +57,7 @@ const usersRoutes = require('./src/routes/users');
 
 //----------- middlewares y rutas ------------
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({extended: false}));
 app.use("/api/users", usersRoutes); 
 
 

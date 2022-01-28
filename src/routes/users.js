@@ -10,11 +10,12 @@ const configPassport = require("../passport")
 //-------
 const auth = (req,res,next)=>{
     if(req.isAuthenticated()) return next()
-    res.redirect("/login")
+    res.redirect("/api/users/login")
 }
 
 router.get("/profile",auth ,(req,res)=>{
-    res.render("profile", {user:req.user.username})
+    res.render("profile", {user:req.session.passport.user[0].username});
+    console.log(req.session.passport.user[0].username)
 })
 
 router.get("/login", (req,res)=>{
@@ -31,17 +32,17 @@ router.get("/logout",(req,res)=>{
 })
 
 router.get("/users",async(req,res)=>{
-    let response = await getAllUser();
+    let response = await getAllUser(res);
 })
 
 router.post("/signup",passport.authenticate("local-signup",{
-    successRedirect:"/login",
-    failureRedirect:"/signup"
+    successRedirect:"/api/users/login",
+    failureRedirect:"/api/users/signup"
 }))
 
 router.post("/login",passport.authenticate("local-login",{
-    successRedirect:"/profile",
-    failureRedirect:"/login"
+    successRedirect:"/api/users/profile",
+    failureRedirect:"/api/users/login"
 }))
 
 module.exports = router;

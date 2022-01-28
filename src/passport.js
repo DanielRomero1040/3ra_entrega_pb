@@ -1,7 +1,8 @@
 const passport = require("passport")
 const LocalStrategy=require("passport-local").Strategy
 const db = require('./db');
-const {User} = require("./models/users")
+const {User} = require("./models/users");
+const {bcrypt} = require('bcryptjs');
 
 
 //sign up
@@ -10,12 +11,12 @@ passport.use("local-signup",new LocalStrategy({
 },async (req,username,password,done)=>{
     //validar
     let user = await User.find({
-        email: username
+        username: username
     });
-    console.log(user)
-    if(!user){
+    console.log("usuario",user)
+    if(!user.length){
         let userNew = await User.create({
-            username,
+            username: username,
             password
         })
         console.log('nuevo',userNew)
@@ -28,20 +29,25 @@ passport.use("local-signup",new LocalStrategy({
 //sign in
 passport.use("local-login",new LocalStrategy(async(username, password,done)=>{
     let user = await User.find({
-        email: username,
-        password: password
+        username,
+        password
     })
-    console.log(user)
-    if(user){
-        done(null,user)
-        return
+    console.log("usuario",user);
+    if(!user.length){
+        console.log("usuario no encontrado");
+        return done(null, false);
     }
-    done(null, false)
+    // if(!isValidPassword(user, password)){
+    //     console.log("contrasena incorrecta");
+    //     return done(null, false);
+    // }
+    return done(null,user);
 }))
 
 //serializacion
 passport.serializeUser((user, done)=>{
-    done(null, user.id)
+    console.log(user)
+    done(null, user)
 })
 
 //des serializacion
@@ -53,5 +59,10 @@ passport.deserializeUser(async(id, done)=>{
     });
     done(null,user)
 });
+
+// function isValidPassword(user, password) {
+//     return bCrypt.compareSync(password, user.password);
+//    }
+   
 
 module.exports = passport
