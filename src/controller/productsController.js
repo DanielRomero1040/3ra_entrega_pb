@@ -10,17 +10,22 @@ class ProductsController {
         let response = await this.productsApi.getAll(res);
     }
 
-    getLogin = (req,res)=>{
-        res.render("signin")
+    getById = async (req,res)=>{
+        let response = await this.productsApi.getById(req.params.id,res) ;      
     }
 
-    getSignUp = (req,res)=>{
-        req.logOut();
-        res.render("signup")
+    addProduct = async (req,res)=>{
+        let response = await this.productsApi.add(req.body,res);
+        console.log(req.body)
     }
 
-    getLogout = (req,res)=>{
-        res.send("bienv");
+    updateById = async(req,res)=>{
+        let response = await this.productsApi.updateById(req.params.id,req.body,res);
+        console.log(req.params, req.body)        
+    }
+
+    deleteById = async (req,res)=>{
+        let response = await this.productsApi.deleteById(req.params.id,res);
     }
 
     static getInstance (){

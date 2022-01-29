@@ -22,41 +22,96 @@ class ProductApi{
     
         }catch(e){
             console.error(e);
-            let message = "error en la consulta";
+            let message = "error en la consulta Services getAll";
             return res.status(500).json({
                 message
             });
         }
     }
 
-    async add(productNew){
+    async add(productNew,res){
+        let message = "Producto Creado Satisfactoriamente"
         let newProduct = await this.productsDao.add(productNew);
-        return newProduct;
+        if(newProduct.isProductAlreadyCreate){
+            message="El producto estaba creado anteriormente, intente cambiar de title";
+        }
+        return res.status(200).json({
+            message:message ,
+            products: newProduct.product   
+        });
     }
 
-    async find(id){
-        let products;
-        if(id){
+    async getById(id,res){
+        try{
+            let products;
+            let message = "registro encontrado.";
             products = await this.productsDao.getById(id);
-        }else{
-            products = await this.productsDao.getAll();
+            console.log(products);
+    
+            if(!products.length){
+                message = "no existen registros.";
+                products = await this.productsDao.getAll();
+            }
+    
+            return res.status(200).json({
+                message,
+                products: products
+            })
+    
+        }catch(e){
+            console.error(e);
+            let message = "error en la consulta Services getById";
+            return res.status(500).json({
+                message
+            });
         }
-        return products;
+
     }
 
-    async delete(id){
-        if(id){
-            await this.productsDao.deleteById(id);
-        }else{
-            await this.productsDao.deleteAll();
+    async updateById(id, newProduct,res){
+        try{
+            let message = "registro encontrado y actualizado.";
+            let productUpdate = await this.productsDao.updateById(id, newProduct);
+    
+            if(!productUpdate){
+                message = "no existen registros para actualizar.";
+            }
+    
+            return res.status(200).json({
+                message,
+                products: productUpdate
+            })
+    
+        }catch(e){
+            console.error(e);
+            let message = "error en la consulta Services updateById";
+            return res.status(500).json({
+                message
+            });
         }
-        return products;
+
+    }
+    async deleteById(id,res){
+        try{
+            let product;
+            let message = "Producto encontrado y eliminado.";
+            product = await this.productsDao.deleteById(id);
+            if(!product){
+                message = "Producto no encontrado.";
+            }
+            return res.status(200).json({
+                message,
+                product
+            });
+        }catch(e){
+            console.error(e);
+            let message = "error en la consulta Services deleteById";
+            return res.status(500).json({
+                message
+            });           
+        };        
     }
 
-    async update(id, newProduct){
-        let productUpdate = await this.productsDao.updateById(id, newProduct);
-        return productUpdate;
-    }
 }
 
 module.exports = ProductApi;

@@ -1,6 +1,6 @@
 const Dao =require("./dao");
 const {Product}=require("../models/products")
-const CustomError = require("../errors/customError")
+const CustomError = require("../errors/customError");
 
 let instance = null;
 
@@ -10,28 +10,94 @@ class ProductsDao extends Dao{
             return await Product.find().exec();
 
         }catch(e){
-            throw new CustomError(500, "error al usar metodo getAll");
+            throw new CustomError(500, "Error en ProductsDao getAll");
         }
         
     }
     async getById(id){
-        throw new CustomError(500, "falta implementar metodo getById");
+        try{
+            let products;
+            products = await Product.find({
+                _id:id
+            }).exec().catch((e)=>{});
+            if(!products){
+                products = [];
+            }
+            return products;
+        }catch(e){            
+            throw new CustomError(500, "Error en ProductsDao getById");
+        }
         
     }
-    async add(product){
-        throw new CustomError(500, "falta implementar metodo add");
+    async add(newProduct){
+
+        try{
+            //validar
+            let isProductAlreadyCreate = false;
+            let msg = {};
+            let product = await Product.find({
+                title: newProduct.title
+            });
+            console.log("product",product)
+            if(!product.length){
+                let productNew = await Product.create({
+                    title: newProduct.title,
+                    description:newProduct.description,
+                    thumbnail:newProduct.thumbnail,
+                    stock:newProduct.stock,
+                    price:newProduct.price
+                })
+                console.log('nuevo',productNew);
+                msg ={
+                    isProductAlreadyCreate: isProductAlreadyCreate,
+                    product:productNew
+                }
+                return msg
+            }
+            msg ={
+                isProductAlreadyCreate:true,
+                product
+            }
+            return msg;
+
+        }catch(e){
+            throw new CustomError(500, "Error en ProductsDao add");
+        };
+
+        
+    }
+    async updateById(id, productUpdated){
+        try{
+            let product;            
+            product = await Product.findOneAndUpdate({ _id: id },{
+                title: productUpdated.title,
+                description:productUpdated.description,
+                thumbnail:productUpdated.thumbnail,
+                stock:productUpdated.stock,
+                price:productUpdated.price
+            }).catch((e)=>{
+                return product;
+            });
+            return product;
+        }catch{
+            throw new CustomError(500, "Error en ProductsDao updateById");
+        };
         
     }
     async deleteById(id){
-        throw new CustomError(500, "falta implementar metodo deleteById");
-        
-    }
-    async updateById(id, product){
-        throw new CustomError(500, "falta implementar metodo updateById");
+        try{
+            let product;
+            product = await Product.deleteOne({ _id: id }).catch((e)=>{
+                return product;
+            });
+            return product;            
+        }catch{
+            throw new CustomError(500, "Error en ProductsDao deleteById");            
+        };
         
     }
     async deleteAll(){
-        throw new CustomError(500, "falta implementar metodo deleteAll");
+        throw new CustomError(500, "Error en ProductsDao deleteAll");
         
     }
 
