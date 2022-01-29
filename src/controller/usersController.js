@@ -1,4 +1,6 @@
 const {getAllUser}= require("../services/userServices");
+let instance = null;
+
 class UsersController {
 
     getProfile = (req,res) =>{
@@ -7,7 +9,7 @@ class UsersController {
     }
 
     getAllUsersController = async (req,res)=>{
-            let response = await getAllUser(res);        
+            let response = await getAllUser(res); 
     }
 
     getLogin = (req,res)=>{
@@ -21,6 +23,13 @@ class UsersController {
 
     getLogout = (req,res)=>{
         res.send("bienv");
+    }
+
+    static getInstance (){
+        if(!instance){
+            instance = new UsersController();
+        }
+        return instance;
     }
     
 }

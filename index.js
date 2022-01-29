@@ -30,7 +30,7 @@ const session = require("express-session")
 const passport = require("passport")
 
 //DAtABASE
-//const {db}=require("./db");
+//const {db}=require("./src/db");
 const req = require("express/lib/request");
 const res = require("express/lib/response");
 

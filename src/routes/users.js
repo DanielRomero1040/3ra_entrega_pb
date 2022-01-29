@@ -4,12 +4,9 @@ const {UsersController}= require("../controller/usersController");
 const {Router} = express;
 const router =  new Router();
 //----------------------------------------
-const passport = require("passport")
-const configPassport = require("../passport")
-
-const UserController = new UsersController();
-
-//-------
+const passport = require("../models/passport")
+const UserController = UsersController.getInstance();
+//----------------------------------------
 const auth = (req,res,next)=>{
     if(req.isAuthenticated()) return next()
     res.redirect("/api/users/login")
