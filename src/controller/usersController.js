@@ -1,7 +1,10 @@
-const {getAllUser}= require("../services/userServices");
+const UsersApi= require("../services/userServices");
 let instance = null;
 
 class UsersController {
+    constructor(){
+        this.usersApi = new UsersApi();
+    }
 
     getProfile = (req,res) =>{
         res.render("profile", {user:req.session.passport.user[0].username});
@@ -9,7 +12,7 @@ class UsersController {
     }
 
     getAllUsersController = async (req,res)=>{
-            let response = await getAllUser(res); 
+        let response = await this.usersApi.getAllUser(res); 
     }
 
     getLogin = (req,res)=>{

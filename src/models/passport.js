@@ -1,9 +1,10 @@
 const passport = require("passport")
 const LocalStrategy=require("passport-local").Strategy
-const db = require('../db');
+const MyMongoClient = require('../db');
 const {User} = require("./users");
 const {bcrypt} = require('bcryptjs');
 
+MyMongoClient.getInstance().connect();
 
 //sign up
 passport.use("local-signup",new LocalStrategy({

@@ -53,12 +53,14 @@ app.use(passport.session())
 
 //routes
 const usersRoutes = require('./src/routes/users');
+const productsRoutes = require('./src/routes/products');
 
 
 //----------- middlewares y rutas ------------
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use("/api/users", usersRoutes); 
+app.use("/api/products", productsRoutes);
 
 
 //-------- fork
