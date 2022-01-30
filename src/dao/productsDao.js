@@ -5,6 +5,11 @@ const CustomError = require("../errors/customError");
 let instance = null;
 
 class ProductsDao extends Dao{
+    constructor(){
+        super();
+        this.type="products";
+    }
+
     async getAll(){
         try{
             return await Product.find().exec();

@@ -5,6 +5,10 @@ const {User} = require("../models/users");
 let instance = null;
 
 class UsersDao extends Dao{
+    constructor(){
+        super();
+        this.type="users";
+    }
 
     async getAll(){
         try{

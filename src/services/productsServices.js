@@ -1,8 +1,10 @@
-const ProductsDao = require("../dao/productsDao");
+const DaoFactory = require("../dao/daoFactory");
+
+const DaoFact = new DaoFactory()
 
 class ProductApi{
     constructor(){
-        this.productsDao = ProductsDao.getInstance();
+        this.productsDao = DaoFact.createDao({type:"products"});
     }
 
     getAll = async(res)=>{

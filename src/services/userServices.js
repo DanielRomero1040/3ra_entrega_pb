@@ -1,9 +1,10 @@
-const {User} = require("../models/users");
-const UsersDao = require("../dao/usersDao");
+const DaoFactory = require("../dao/daoFactory");
+
+const DaoFact = new DaoFactory();
 
 class UsersApi{
     constructor(){
-        this.usersDao = UsersDao.getInstance();
+        this.usersDao = DaoFact.createDao({type:"users"});
     }
 
     getAllUser = async(res)=>{
