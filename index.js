@@ -1,4 +1,7 @@
 const express = require("express");
+const cluster = require("cluster");
+const numCPUs = require("os").cpus().length;
+const cors = require("cors");
 
 const yargs = require ("yargs/yargs")(process.argv.slice(2))
 const args = yargs.default({
@@ -51,16 +54,17 @@ app.set("view engine","ejs")
 app.use(passport.initialize())
 app.use(passport.session())
 
+
 //routes
 const usersRoutes = require('./src/routes/users');
 const productsRoutes = require('./src/routes/products');
-
 
 //----------- middlewares y rutas ------------
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use("/api/users", usersRoutes); 
 app.use("/api/products", productsRoutes);
+app.use(cors());
 
 
 //-------- fork
@@ -83,12 +87,15 @@ let nodev = process.version;
 let title = process.title;
 let platform = process.platform;
 let memory = process.memoryUsage();
-console.log(memory)
+console.log("Process:",memory)
 
 
 
 app.get("/info", (req,res)=>{
     res.render("info",{pid, path, nodev, title, platform,memory})
+})
+app.get("/data", (req,res)=>{
+    res.send(`server run on PORT ${PORT} HOST ${HOST} - PID ${process.pid}`)
 })
 
 
@@ -103,7 +110,7 @@ app.listen(PORT, ()=>{
     }).catch((err)=> {
         console.log(err)
     })*/
-    console.log(`server run on PORT ${PORT} HOST ${HOST}`)
+    console.log(`server run on PORT ${PORT} HOST ${HOST} - PID ${process.pid}`)
 });
 
 module.exports = app;

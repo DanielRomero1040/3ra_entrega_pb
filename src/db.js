@@ -6,8 +6,12 @@ dotenv.config()
 const user=process.env.USERDB;
 const password=process.env.PASSDB;
 const dbname=process.env.DBNAME;
+const testdbname = process.env.TESTDBNAME;
 const uri=`mongodb+srv://${user}:${password}@cluster0.hwv82.mongodb.net/${dbname}?retryWrites=true&w=majority`;
+const uriTest=`mongodb+srv://${user}:${password}@cluster0.hwv82.mongodb.net/${testdbname}?retryWrites=true&w=majority`;
 let instance = null;
+
+let database = uri;
 
 class MyMongoClient{
     constructor(){
@@ -17,7 +21,10 @@ class MyMongoClient{
 
     async connect(){
         try{
-            this.client.connect(uri
+            if(process.env.NODE_ENV === "testing"){
+                database = uriTest;
+            };
+            this.client.connect(database
             ).then(()=>console.log("Base de datos conectada"))
             .catch(e=>console.log(e))
 

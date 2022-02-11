@@ -40,11 +40,11 @@ class ProductsDao extends Dao{
             //validar
             let isProductAlreadyCreate = false;
             let msg = {};
-            let product = await Product.find({
+            let product = await Product.findOne({
                 title: newProduct.title
             });
             console.log("product",product)
-            if(!product.length){
+            if(!product){
                 let productNew = await Product.create({
                     title: newProduct.title,
                     description:newProduct.description,

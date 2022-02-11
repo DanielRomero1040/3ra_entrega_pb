@@ -6,7 +6,7 @@ class ProductsController {
         this.productsApi = new ProductsApi();
     }
 
-    getAllProductsController = async (req,res)=>{
+    getAll = async (req,res)=>{
         let response = await this.productsApi.getAll(res);
     }
 

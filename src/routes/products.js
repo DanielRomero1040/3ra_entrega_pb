@@ -7,7 +7,7 @@ const router =  new Router();
 const ProductController = ProductsController.getInstance();
 //----------------------------------------
 
-router.get("/products",ProductController.getAllProductsController );
+router.get("/products",ProductController.getAll );
 
 router.get("/:id",ProductController.getById );
 
