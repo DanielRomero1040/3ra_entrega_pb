@@ -66,7 +66,7 @@ describe("API GET api/products/products ", ()=>{
     })
 
     it("Deberia eliminar un producto por su id",async()=>{
-        let idPrueba = "61f5a9f1bfe5c99891f80388";
+        let idPrueba = "62047d275674594f9e02dc97";
         let arrayLengthBefore = await request.get(`/api/products/${idPrueba}`);
 
         let response = await request.delete(`/api/products/delete/${idPrueba}`);
