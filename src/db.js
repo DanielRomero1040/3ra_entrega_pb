@@ -10,8 +10,6 @@ const testdbname = process.env.TESTDBNAME;
 const uri=`mongodb+srv://${user}:${password}@cluster0.hwv82.mongodb.net/${dbname}?retryWrites=true&w=majority`;
 let instance = null;
 
-let database = uri;
-
 class MyMongoClient{
     constructor(){
         this.connected = false;
@@ -20,7 +18,7 @@ class MyMongoClient{
 
     async connect(){
         try{
-            this.client.connect(database
+            this.client.connect(uri
             ).then(()=>console.log("Base de datos conectada"))
             .catch(e=>console.log(e))
 

@@ -3,6 +3,7 @@ const cluster = require("cluster");
 const numCPUs = require("os").cpus().length;
 const cors = require("cors");
 
+
 const yargs = require ("yargs/yargs")(process.argv.slice(2))
 const args = yargs.default({
     port:8080
@@ -10,6 +11,19 @@ const args = yargs.default({
 
 const dotenv = require("dotenv");
 dotenv.config()
+
+// graphql schema en el dao de carrit
+const {CartDao,schemaCartGql} = require("./src/dao/cartDao");
+const {graphqlHTTP}=require("express-graphql");
+const Cart = CartDao.getInstance();
+const root = {
+    getAll: Cart.getAll,
+    getById: Cart.getById,
+    add: Cart.add
+}
+
+
+//-------------
 
 //-- child process
 const {exec,spawn} = require("child_process")
@@ -66,7 +80,11 @@ app.use("/api/users", usersRoutes);
 app.use("/api/products", productsRoutes);
 app.use(cors());
 
-
+app.use("/graphql",graphqlHTTP({
+    schema:schemaCartGql,
+    rootValue:root,
+    graphiql:true
+}));
 //-------- fork
 
 
@@ -110,7 +128,7 @@ app.listen(PORT, ()=>{
     }).catch((err)=> {
         console.log(err)
     })*/
-    console.log(`server run on PORT ${PORT} HOST ${HOST} - PID ${process.pid}`)
+    console.log(`server run on PORT ${PORT} HOST ${HOST} - PID ${process.pid} `)
 });
 
 module.exports = app;

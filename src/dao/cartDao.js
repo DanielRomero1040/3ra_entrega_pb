@@ -1,18 +1,52 @@
 const Dao =require("./dao");
-const {Product}=require("../models/products")
+const {Cart}=require("../models/productsCart")
 const CustomError = require("../errors/customError");
+const {gql,ApolloServer} = require("apollo-server");
+
+const {buildSchema, buildClientSchema}=require("graphql");
+
+//graphql
+const schemaCartGql = buildSchema(`
+    type Cart{
+        _id:String!
+        title:String!
+        description:String!
+        thumbnail:String!
+        stock:Int!
+        price:Int!
+        quantity:Int!
+    }
+
+    type Query{
+        getAll: [Cart]  
+        getById(_id:String): Cart
+    }
+
+    type Mutation{
+        add(
+            _id:String!
+            title:String!
+            description:String! 
+            thumbnail:String! 
+            stock:Int!
+            price:Int!
+            quantity:Int!
+            ):Cart
+        
+    }
+`)
 
 let instance = null;
 
-class ProductsDao extends Dao{
+class CartDao extends Dao{
     constructor(){
         super();
-        this.type="products";
+        this.type="cart";
     }
 
     async getAll(){
         try{
-            return await Product.find().exec();
+            return await Cart.find().exec();
 
         }catch(e){
             throw new CustomError(500, "Error en ProductsDao getAll");
@@ -22,8 +56,8 @@ class ProductsDao extends Dao{
     async getById(id){
         try{
             let products;
-            products = await Product.find({
-                _id:id
+            products = await Cart.findOne({
+                _id:id._id
             }).exec().catch((e)=>{});
             if(!products){
                 products = [];
@@ -40,30 +74,32 @@ class ProductsDao extends Dao{
             //validar
             let isProductAlreadyCreate = false;
             let msg = {};
-            let product = await Product.findOne({
+            let product = await Cart.findOne({
                 title: newProduct.title
             });
             console.log("product",product)
             if(!product){
-                let productNew = await Product.create({
+                let productNew = await Cart.create({
+                    _id:newProduct._id,
                     title: newProduct.title,
                     description:newProduct.description,
                     thumbnail:newProduct.thumbnail,
                     stock:newProduct.stock,
-                    price:newProduct.price
+                    price:newProduct.price,
+                    quantity:newProduct.quantity
                 })
                 console.log('nuevo producto',productNew);
                 msg ={
                     isProductAlreadyCreate: isProductAlreadyCreate,
                     product:productNew
                 }
-                return msg
+                return productNew
             }
             msg ={
                 isProductAlreadyCreate:true,
                 product
             }
-            return msg;
+            return product;
 
         }catch(e){
             throw new CustomError(500, "Error en ProductsDao add");
@@ -74,7 +110,7 @@ class ProductsDao extends Dao{
     async updateById(id, productUpdated){
         try{
             let product;            
-            product = await Product.findOneAndUpdate({ _id: id },{
+            product = await Cart.findOneAndUpdate({ _id: id },{
                 title: productUpdated.title,
                 description:productUpdated.description,
                 thumbnail:productUpdated.thumbnail,
@@ -92,7 +128,7 @@ class ProductsDao extends Dao{
     async deleteById(id){
         try{
             let product;
-            product = await Product.deleteOne({ _id: id }).catch((e)=>{
+            product = await Cart.deleteOne({ _id: id }).catch((e)=>{
                 return product;
             });
             return product;            
@@ -108,10 +144,10 @@ class ProductsDao extends Dao{
 
     static getInstance (){
         if(!instance){
-            instance = new ProductsDao();
+            instance = new CartDao();
         }
         return instance;
     }
 }
 
-module.exports = ProductsDao;
+module.exports = {CartDao,schemaCartGql};
